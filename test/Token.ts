@@ -15,6 +15,8 @@ describe("Token", () => {
 
   const initialSupply = hre.ethers.parseEther("1000");
 
+  const stakeAmount = hre.ethers.parseEther("100");
+
   beforeEach(async () => {
     [owner, addr1] = await hre.ethers.getSigners();
 
@@ -64,6 +66,46 @@ describe("Token", () => {
       const curSupply = await token.totalSupply();
 
       expect(curSupply).to.be.equal(prevSupply + MINT_AMOUNT);
+    });
+  });
+
+  describe("Staking", () => {
+    it("Should allow user to stake token", async () => {
+      await token.transfer(addr1.address, stakeAmount);
+      await token.connect(addr1).stake(stakeAmount);
+
+      const staked = await token.staked(addr1.address);
+      const contractBalance = await token.balanceOf(token.getAddress());
+
+      expect(staked).to.equal(stakeAmount);
+      expect(contractBalance).to.equal(stakeAmount);
+    });
+
+    it("Should accumulate rewards over the time", async () => {
+      await token.transfer(addr1.address, stakeAmount);
+      await token.connect(addr1).stake(stakeAmount);
+
+      await hre.ethers.provider.send("evm_increaseTime", [365 * 24 * 60 * 60]);
+      await hre.ethers.provider.send("evm_mine", []);
+
+      await token.connect(addr1).claim();
+
+      const newUserBalance = await token.balanceOf(addr1.address);
+
+      expect(newUserBalance).to.be.greaterThan(0);
+    });
+
+    it("Should allow unstake and return tokens", async () => {
+      await token.transfer(addr1.address, stakeAmount);
+      await token.connect(addr1).stake(stakeAmount);
+
+      await token.connect(addr1).unstake(stakeAmount);
+
+      const staked = await token.staked(addr1.address);
+      const userBalance = await token.balanceOf(addr1.address);
+
+      expect(staked).to.equal(0);
+      expect(userBalance).to.be.gte(stakeAmount);
     });
   });
 });

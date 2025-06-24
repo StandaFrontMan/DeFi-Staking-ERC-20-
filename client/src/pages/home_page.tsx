@@ -2,8 +2,11 @@ import { ethers } from "ethers";
 import { useEffect, useState } from "react";
 import { tokenAddress } from "../contracts/tokenAddress";
 import { tokenAbi } from "../contracts/tokenAbi";
+import { useWeb3 } from "../store/store";
 
 export function HomePage() {
+  const ctx = useWeb3();
+
   const [tokenName, setTokenName] = useState<string>("");
 
   useEffect(() => {
@@ -26,6 +29,12 @@ export function HomePage() {
 
     load();
   }, []);
+
+  if (!ctx) return null;
+
+  const { test } = ctx;
+
+  console.log(test);
 
   return <p>Connected token: {tokenName}</p>;
 }

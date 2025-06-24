@@ -1,13 +1,22 @@
-export function HomePage({ provider, signer, contract }: Web3Data) {
-  const getCtAdress = async () => {
-    const addr = await contract.getAddress();
+import "./home_page_styles.css";
 
-    console.log(addr);
+import type { Signer } from "ethers";
+import type { Contract } from "ethers";
+import type { BrowserProvider } from "ethers";
+
+type Props = {
+  web3: {
+    provider: BrowserProvider;
+    signer: Signer;
+    contract: Contract;
   };
+};
 
+export function HomePage({ web3 }: Props) {
   return (
-    <button type="button" onClick={() => getCtAdress()}>
-      Interact with contract
-    </button>
+    <div className="container">
+      <span>asdsda</span>
+      <span>asdads</span>
+    </div>
   );
 }

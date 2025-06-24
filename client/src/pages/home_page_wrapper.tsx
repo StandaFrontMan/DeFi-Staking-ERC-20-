@@ -26,5 +26,5 @@ export function HomePageWrapper() {
   }, []);
 
   if (!web3) return <p>Loading Web3...</p>;
-  return <HomePage {...web3} />;
+  return <HomePage web3={web3} />;
 }

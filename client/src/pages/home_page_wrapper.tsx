@@ -1,16 +1,8 @@
-import { ethers, type BrowserProvider } from "ethers";
+import { ethers } from "ethers";
 import { HomePage } from "./home_page";
-import type { Signer } from "ethers";
-import type { Contract } from "ethers";
 import { useEffect, useState } from "react";
 import { tokenAddress } from "../contracts/tokenAddress";
 import { tokenAbi } from "../contracts/tokenAbi";
-
-export interface Web3Data {
-  provider: BrowserProvider;
-  signer: Signer;
-  contract: Contract;
-}
 
 export function HomePageWrapper() {
   const [web3, setWeb3] = useState<Web3Data | null>(null);

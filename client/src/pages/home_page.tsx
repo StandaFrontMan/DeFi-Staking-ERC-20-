@@ -1,40 +1,27 @@
+import { useEffect } from "react";
 import { ethers } from "ethers";
-import { useEffect, useState } from "react";
-import { tokenAddress } from "../contracts/tokenAddress";
 import { tokenAbi } from "../contracts/tokenAbi";
-import { useWeb3 } from "../store/store";
+import { tokenAddress } from "../contracts/tokenAddress";
+import type { Contract } from "ethers";
+import type { Signer } from "ethers";
+import type { BrowserProvider } from "ethers";
 
-export function HomePage() {
-  const ctx = useWeb3();
+export interface Web3Data {
+  provider: BrowserProvider;
+  signer: Signer;
+  contract: Contract;
+}
 
-  const [tokenName, setTokenName] = useState<string>("");
+export function HomePage({ provider, signer, contract }: Web3Data) {
+  const getCtAdress = async () => {
+    const addr = await contract.getAddress();
 
-  useEffect(() => {
-    const load = async () => {
-      if (!window.ethereum) {
-        console.error("MetaMask not detected");
-        return;
-      }
+    console.log(addr);
+  };
 
-      const provider = new ethers.BrowserProvider(window.ethereum);
-      await provider.send("eth_requestAccounts", []);
-
-      const signer = await provider.getSigner();
-      const contract = new ethers.Contract(tokenAddress, tokenAbi, signer);
-
-      const name = await contract.name();
-
-      setTokenName(name);
-    };
-
-    load();
-  }, []);
-
-  if (!ctx) return null;
-
-  const { test } = ctx;
-
-  console.log(test);
-
-  return <p>Connected token: {tokenName}</p>;
+  return (
+    <button type="button" onClick={() => getCtAdress()}>
+      Interact with contract
+    </button>
+  );
 }

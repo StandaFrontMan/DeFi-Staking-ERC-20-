@@ -1,11 +1,11 @@
 import "./App.css";
-import { HomePage } from "./pages/home_page";
+import { HomePageWrapper } from "./pages/home_page_wrapper";
 import { Web3Provider } from "./store/store";
 
 function App() {
   return (
     <Web3Provider>
-      <HomePage />
+      <HomePageWrapper />
     </Web3Provider>
   );
 }

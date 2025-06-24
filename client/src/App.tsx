@@ -1,35 +1,41 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from "react";
+import "./App.css";
+import { ethers } from "ethers";
+import { tokenAddress } from "./contracts/tokenAddress";
+import { tokenAbi } from "./contracts/tokenAbi";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [tokenName, setTokenName] = useState<string>("");
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+  useEffect(() => {
+    const load = async () => {
+      if (!window.ethereum) {
+        console.error("MetaMask not detected");
+        return;
+      }
+
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      await provider.send("eth_requestAccounts", []);
+
+      const signer = await provider.getSigner();
+      const contract = new ethers.Contract(tokenAddress, tokenAbi, signer);
+
+      const name = await contract.name();
+
+      setTokenName(name);
+
+      const tx = await signer.sendTransaction({
+        to: contract.getAddress(),
+        value: ethers.parseEther("100"),
+      });
+
+      await tx.wait();
+    };
+
+    load();
+  }, []);
+
+  return <p>Connected token: {tokenName}</p>;
 }
 
-export default App
+export default App;

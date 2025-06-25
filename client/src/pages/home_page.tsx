@@ -1,22 +1,28 @@
 import "./home_page_styles.css";
 
-import type { Signer } from "ethers";
-import type { Contract } from "ethers";
-import type { BrowserProvider } from "ethers";
+import { useEffect, useState } from "react";
 
-type Props = {
-  web3: {
-    provider: BrowserProvider;
-    signer: Signer;
-    contract: Contract;
-  };
-};
+import { useWeb3 } from "../store/store";
+import { ConnectButton } from "../components/connect_button/connect_button";
 
-export function HomePage({ web3 }: Props) {
+export function HomePage() {
+  const { web3 } = useWeb3();
+
+  const [address, setAddress] = useState("");
+
+  useEffect(() => {
+    const getAddress = async () => {
+      if (!web3) return;
+      const addr = await web3.signer.getAddress();
+      setAddress(addr);
+    };
+
+    getAddress();
+  }, [web3]);
+
   return (
     <div className="container">
-      <span>asdsda</span>
-      <span>asdads</span>
+      {web3 ? <span>{address}</span> : <ConnectButton />}
     </div>
   );
 }

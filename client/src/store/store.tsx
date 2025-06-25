@@ -1,17 +1,37 @@
+import type { Signer } from "ethers";
+import type { Contract } from "ethers";
+import type { BrowserProvider } from "ethers";
 import { createContext, useContext, useState, type ReactNode } from "react";
 
-interface Web3ContextType {
-  test: string;
+interface Web3Data {
+  provider: BrowserProvider;
+  signer: Signer;
+  contract: Contract;
 }
 
-const Web3Context = createContext<Web3ContextType | null>(null);
+interface Web3ContextType {
+  web3: Web3Data | null;
+  hSetWeb3: (web3: Web3Data) => void;
+}
 
-export const useWeb3 = () => useContext(Web3Context);
+const Web3Context = createContext<Web3ContextType | undefined>(undefined);
+
+export const useWeb3 = () => {
+  const context = useContext(Web3Context);
+  if (!context) throw new Error("useWeb3 must be used within Web3Provider");
+  return context;
+};
 
 export const Web3Provider = ({ children }: { children: ReactNode }) => {
-  const [test, setTest] = useState<string>("Wanna hack");
+  const [web3, setWeb3] = useState<Web3Data | null>(null);
+
+  const hSetWeb3 = (web3: Web3Data) => {
+    setWeb3(web3);
+  };
 
   return (
-    <Web3Context.Provider value={{ test }}>{children}</Web3Context.Provider>
+    <Web3Context.Provider value={{ hSetWeb3, web3 }}>
+      {children}
+    </Web3Context.Provider>
   );
 };

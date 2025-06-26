@@ -1,0 +1,32 @@
+.dashboard {
+  margin: 2rem auto;
+  padding: 1.5rem;
+  border-radius: 8px;
+  background-color: #1e1e1e;
+  color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.dashboard__title {
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.dashboard__item {
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard__label {
+  font-weight: bold;
+  color: #ccc;
+  margin-bottom: 0.2rem;
+}
+
+.dashboard__value {
+  font-family: monospace;
+  color: #fff;
+  word-break: break-all;
+}
